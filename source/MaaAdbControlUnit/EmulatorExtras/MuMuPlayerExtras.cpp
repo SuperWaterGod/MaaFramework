@@ -138,7 +138,7 @@ bool MuMuPlayerExtras::touch_move(int contact, int x, int y, int pressure)
     }
 
     int display_id = get_display_id();
-    // LogInfo << VAR(contact) << VAR(x) << VAR(y) << VAR(pressure) << VAR(display_id);
+    LogInfo << VAR(contact) << VAR(x) << VAR(y) << VAR(pressure) << VAR(display_id);
 
     // contact start from 0, but mumu start from 1
     int ret = input_event_touch_down_func_(mumu_handle_, display_id, contact + 1, x, y);

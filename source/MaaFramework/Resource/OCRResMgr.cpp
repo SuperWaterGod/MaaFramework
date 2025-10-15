@@ -46,10 +46,9 @@ void OCRResMgr::use_coreml(uint32_t coreml_flag)
 {
     LogInfo << VAR(coreml_flag);
 
-    det_option_.UseCoreML(coreml_flag);
+    LogWarn << "OCR with CoreML is very poor. I don’t know the reason yet. Roll back to using CPU";
 
-    LogWarn << "OCR REC with CoreML is very poor. I don’t know the reason yet. Roll back to using CPU for REC. (DET still uses CoreML)";
-    // rec_option_.UseCoreML(coreml_flag);
+    det_option_.UseCpu();
     rec_option_.UseCpu();
 }
 

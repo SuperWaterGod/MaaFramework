@@ -17,7 +17,10 @@ using JTarget = std::variant<bool, std::string, JRect>;
 
 struct JDirectHit
 {
-    json::value to_json() const { return json::object(); }
+    JTarget roi = JRect {};
+    JRect roi_offset {};
+
+    MEO_TOJSON(roi, roi_offset);
 };
 
 struct JTemplateMatch
@@ -116,8 +119,34 @@ struct JCustomRecognition
     MEO_TOJSON(roi, roi_offset, custom_recognition, custom_recognition_param);
 };
 
-using JRecognitionParam = std::
-    variant<JDirectHit, JTemplateMatch, JFeatureMatch, JColorMatch, JOCR, JNeuralNetworkClassify, JNeuralNetworkDetect, JCustomRecognition>;
+struct JSubRecognition;
+
+struct JAnd
+{
+    std::vector<json::value> all_of;
+    int box_index = 0;
+
+    MEO_TOJSON(all_of, box_index);
+};
+
+struct JOr
+{
+    std::vector<json::value> any_of;
+
+    MEO_TOJSON(any_of);
+};
+
+using JRecognitionParam = std::variant<
+    JDirectHit,
+    JTemplateMatch,
+    JFeatureMatch,
+    JColorMatch,
+    JOCR,
+    JNeuralNetworkClassify,
+    JNeuralNetworkDetect,
+    JAnd,
+    JOr,
+    JCustomRecognition>;
 
 struct JRecognition
 {
@@ -268,7 +297,7 @@ struct JCustomAction
     std::string custom_action;
     json::value custom_action_param;
 
-    MEO_TOJSON(custom_action, custom_action_param);
+    MEO_TOJSON(target, target_offset, custom_action, custom_action_param);
 };
 
 using JActionParam = std::variant<
@@ -327,6 +356,9 @@ struct JPipelineData
     int64_t post_delay = 0;
     JWaitFreezes pre_wait_freezes;
     JWaitFreezes post_wait_freezes;
+    uint32_t repeat = 0;
+    int64_t repeat_delay = 0;
+    JWaitFreezes repeat_wait_freezes;
     uint32_t max_hit = 0;
     json::value focus;
     json::object attach;
@@ -345,6 +377,9 @@ struct JPipelineData
         post_delay,
         pre_wait_freezes,
         post_wait_freezes,
+        repeat,
+        repeat_delay,
+        repeat_wait_freezes,
         max_hit,
         focus,
         attach);

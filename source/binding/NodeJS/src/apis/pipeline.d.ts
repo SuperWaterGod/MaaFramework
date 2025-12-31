@@ -24,10 +24,19 @@ declare global {
             ColorMatch: 'Horizontal' | 'Vertical' | 'Score' | 'Area' | 'Random'
             OCR: 'Horizontal' | 'Vertical' | 'Area' | 'Length' | 'Random' | 'Expected'
             NeuralNetworkClassify: 'Horizontal' | 'Vertical' | 'Score' | 'Random' | 'Expected'
-            NeuralNetworkDetect: 'Horizontal' | 'Vertical' | 'Score' | 'Area' | 'Random' | 'Expected'
+            NeuralNetworkDetect:
+                | 'Horizontal'
+                | 'Vertical'
+                | 'Score'
+                | 'Area'
+                | 'Random'
+                | 'Expected'
         }
 
-        type RecognitionDirectHit = {}
+        type RecognitionDirectHit = {
+            roi?: Rect | NodeName
+            roi_offset?: Rect
+        }
 
         type RecognitionTemplateMatch<Mode> = RequiredIfStrict<
             {
@@ -139,6 +148,23 @@ declare global {
             Mode
         >
 
+        type RecognitionAnd<Mode> = RequiredIfStrict<
+            {
+                all_of?: Recognition<Mode>['recognition'][]
+                box_index?: number
+            },
+            'all_of',
+            Mode
+        >
+
+        type RecognitionOr<Mode> = RequiredIfStrict<
+            {
+                any_of: Recognition<Mode>['recognition'][]
+            },
+            'any_of',
+            Mode
+        >
+
         type MixReco<Type extends string, Param, Mode> =
             | {
                   recognition: {
@@ -152,6 +178,18 @@ declare global {
                   } & Param,
                   Mode
               >
+
+        type RecognitionType =
+            | 'DirectHit'
+            | 'TemplateMatch'
+            | 'FeatureMatch'
+            | 'ColorMatch'
+            | 'OCR'
+            | 'NeuralNetworkClassify'
+            | 'NeuralNetworkDetect'
+            | 'And'
+            | 'Or'
+            | 'Custom'
 
         type Recognition<Mode> =
             | RemoveIfDump<
@@ -170,6 +208,8 @@ declare global {
             | MixReco<'OCR', RecognitionOCR<Mode>, Mode>
             | MixReco<'NeuralNetworkClassify', RecognitionNeuralNetworkClassify<Mode>, Mode>
             | MixReco<'NeuralNetworkDetect', RecognitionNeuralNetworkDetect<Mode>, Mode>
+            | MixReco<'And', RecognitionAnd<Mode>, Mode>
+            | MixReco<'Or', RecognitionOr<Mode>, Mode>
             | MixReco<'Custom', RecognitionCustom<Mode>, Mode>
 
         type ActionDoNothing = {}
@@ -190,9 +230,11 @@ declare global {
         type ActionSwipe = {
             begin?: true | NodeName | Rect
             begin_offset?: Rect
-            end?: true | NodeName | Rect
-            end_offset?: Rect
-            duration?: number
+            end?: true | NodeName | Rect | (true | NodeName | Rect)[]
+            end_offset?: Rect | Rect[]
+            duration?: number | number[]
+            end_hold?: number | number[]
+            only_hover?: boolean
             contact?: number
         }
 
@@ -202,9 +244,11 @@ declare global {
                     starting?: number
                     begin?: true | NodeName | Rect
                     begin_offset?: Rect
-                    end?: true | NodeName | Rect
-                    end_offset?: Rect
-                    duration?: number
+                    end?: true | NodeName | Rect | (true | NodeName | Rect)[]
+                    end_offset?: Rect | Rect[]
+                    duration?: number | number[]
+                    end_hold?: number | number[]
+                    only_hover?: boolean
                     contact?: number
                 }[]
             },
@@ -293,6 +337,7 @@ declare global {
                 args?: string[]
                 detach?: boolean
             },
+            'exec',
             Mode
         >
 
@@ -329,6 +374,29 @@ declare global {
                       param?: Param
                   }
               }
+
+        type ActionType =
+            | 'DoNothing'
+            | 'Click'
+            | 'LongPress'
+            | 'Swipe'
+            | 'MultiSwipe'
+            | 'TouchDown'
+            | 'TouchMove'
+            | 'TouchUp'
+            | 'Key'
+            | 'ClickKey'
+            | 'LongPressKey'
+            | 'KeyDown'
+            | 'KeyUp'
+            | 'InputText'
+            | 'StartApp'
+            | 'StopApp'
+            | 'Scroll'
+            | 'StopTask'
+            | 'Command'
+            | 'Shell'
+            | 'Custom'
 
         type Action<Mode> =
             | RemoveIfDump<
@@ -387,10 +455,13 @@ declare global {
             inverse?: boolean
             enabled?: boolean
             max_hit?: number
-            pre_delay?: boolean
-            post_delay?: boolean
+            pre_delay?: number
+            post_delay?: number
             pre_wait_freezes?: RemoveIfDump<number, Mode> | WaitFreeze
             post_wait_freezes?: RemoveIfDump<number, Mode> | WaitFreeze
+            repeat?: number
+            repeat_delay?: number
+            repeat_wait_freezes?: RemoveIfDump<number, Mode> | WaitFreeze
             focus?: unknown
             attach?: Record<string, unknown>
         }

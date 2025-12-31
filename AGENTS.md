@@ -11,7 +11,7 @@
 
 ## 目录结构
 
-```
+```text
 MaaFramework/
 ├── include/                    # C 语言头文件（公开 API）
 │   ├── MaaFramework/           # 核心框架 API
@@ -73,13 +73,13 @@ MaaFramework/
 ### 核心对象
 
 1. **MaaResource**：资源管理器，加载 Pipeline JSON、模型、图像模板
-2. **MaaController**：控制器，负责截图和输入操作（ADB/Win32）
+2. **MaaController**：控制器，负责截图和输入操作（ADB/Win32/PlayCover）
 3. **MaaTasker**：任务执行器，绑定 Resource 和 Controller 后执行任务
 4. **MaaContext**：任务上下文，在 Custom 回调中提供运行时操作能力
 
 ### 执行流程
 
-```
+```text
 1. 创建 Resource → 加载资源
 2. 创建 Controller → 连接设备
 3. 创建 Tasker → 绑定 Resource 和 Controller
@@ -125,9 +125,13 @@ MaaFramework/
 
 ### 代码风格
 
-- C++ 使用 C++20 标准
-- 使用 clang-format 格式化代码
-- 头文件使用 `#pragma once`
+- 优先使用 C++20 特性，如 `std::format`、`std::ranges`、`std::views` 等
+- 当 Boost 提供比标准库显著更优的实现，且不引入额外依赖时，考虑使用 Boost（如 `boost::wregex` 优于 `std::regex`）
+- 主要遵循 Google C++ 代码风格
+
+#### 函数拆分与 lambda 使用
+
+- **避免长 lambda**：lambda 适合做轻量的适配/回调（通常几行内即可读懂）。当 lambda 内包含较长的 `switch`/循环/复杂控制流或超过可读的长度时，应提取为具名函数/成员方法，提升可读性、可测试性与复用性。
 
 #### 控制流与嵌套
 
@@ -137,43 +141,10 @@ MaaFramework/
 - **异常路径早返回**：错误处理、边界情况应尽早处理并返回，使主逻辑保持在最外层
 - **避免 else 分支嵌套**：当 if 分支以 return 结束时，后续逻辑无需包裹在 else 中
 
-```cpp
-// ✅ 推荐：Guard Clauses 模式
-bool process(Resource* res, const Input& input)
-{
-    if (!res) {
-        LogError << "resource is null";
-        return false;
-    }
-    if (!input.is_valid()) {
-        LogError << "invalid input";
-        return false;
-    }
+#### 异常使用原则
 
-    // 主逻辑在最外层，无额外嵌套
-    auto result = res->do_work(input);
-    return result.success;
-}
-
-// ❌ 避免：深层嵌套
-bool process(Resource* res, const Input& input)
-{
-    if (res) {
-        if (input.is_valid()) {
-            auto result = res->do_work(input);
-            return result.success;
-        }
-        else {
-            LogError << "invalid input";
-            return false;
-        }
-    }
-    else {
-        LogError << "resource is null";
-        return false;
-    }
-}
-```
+- **尽量不使用 `try/catch` 作为常规控制流**：优先通过前置条件检查来规避无效调用路径（参数/状态/资源/外部依赖不满足则不调用），并以返回值/状态码/可查询状态的方式显式失败
+- **仅在边界集中兜底**：确有第三方库可能抛异常时，将 `try/catch` 收敛在模块边界/线程入口/任务调度入口等少数位置，统一转换为错误码/失败状态并上报；避免在业务逻辑层层捕获导致逻辑分散
 
 ### 注释规范
 
@@ -217,28 +188,14 @@ bool process(Resource* res, const Input& input)
 
 ## 常见开发场景
 
-### 添加新的识别算法
+### 添加新的 Pipeline 字段
 
-1. 在 `source/MaaFramework/Vision/` 添加算法实现
-2. 在 `source/MaaFramework/Task/Component/Recognizer.cpp` 注册算法
-3. 在 `source/MaaFramework/Resource/PipelineParser.cpp` 添加解析逻辑
-4. 在 `source/MaaFramework/Resource/PipelineDumper.cpp` 添加序列化逻辑
-5. 更新 Python 绑定中的 `get_node_object` 解析逻辑（如有新的结果格式）
-6. 更新 `tools/pipeline.schema.json`
-7. 更新中英文文档 `docs/*/3.1-*`
-
-> **说明**：Python 绑定的 `get_node_object` 数据来源于 `PipelineDumper` 序列化的 JSON，而非原始 Pipeline JSON。
-
-### 添加新的动作类型
-
-1. 在 `source/MaaFramework/Task/Component/Actuator.cpp` 实现动作
+1. 在 `source/MaaFramework/` 添加字段本身的功能性代码
 2. 在 `source/MaaFramework/Resource/PipelineParser.cpp` 添加解析逻辑
 3. 在 `source/MaaFramework/Resource/PipelineDumper.cpp` 添加序列化逻辑
-4. 更新 Python 绑定中的 `get_node_object` 解析逻辑（如有新的结果格式）
+4. 更新 `source/binding` 中的解析逻辑（注意：binding 中的数据来源于 `PipelineDumper` 序列化的 JSON，而非原始 Pipeline JSON。）
 5. 更新 `tools/pipeline.schema.json`
-6. 更新中英文文档
-
-> **说明**：Python 绑定的 `get_node_object` 数据来源于 `PipelineDumper` 序列化的 JSON，而非原始 Pipeline JSON。
+6. 更新中英文文档 `docs/*/3.1-*`
 
 ### 修改回调消息（MaaMsg）
 

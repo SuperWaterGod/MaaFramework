@@ -87,8 +87,8 @@ It offers low-code simplicity while maintaining high extensibility. The framewor
 - [MaaMCP](https://github.com/MaaXYZ/MaaMCP) ![python](https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white) ![license](https://img.shields.io/github/license/MaaXYZ/MaaMCP) ![activity](https://img.shields.io/github/commit-activity/m/MaaXYZ/MaaMCP?color=%23ff69b4) ![stars](https://img.shields.io/github/stars/MaaXYZ/MaaMCP?style=social) [![pypi](https://img.shields.io/badge/PyPI-3776AB?logo=pypi&logoColor=white)](https://pypi.org/project/maa-mcp)  
   A MCP server, based on MaaFramework, provides AI assistants with automation capabilities for Android devices and Windows desktops.
 
-- [MAALogAnalyzer](https://github.com/Windsland52/MAALogAnalyzer) ![Typescript](https://img.shields.io/badge/Typescript-8A2BE2?logo=typescript) ![license](https://img.shields.io/github/license/Windsland52/MAALogAnalyzer) ![activity](https://img.shields.io/github/commit-activity/m/Windsland52/MAALogAnalyzer?color=%23ff69b4) ![stars](https://img.shields.io/github/stars/Windsland52/MAALogAnalyzer?style=social) [![website](https://img.shields.io/badge/https://maaloganalyzer.maafw.xyz-%234285F4)](https://maaloganalyzer.maafw.xyz/)  
-  A MaaFramework log analysis tool based on Vue 3 + Tauri, supporting visualization of task execution flow and full-text search.
+- [MaaLogAnalyzer](https://github.com/Windsland52/MAALogAnalyzer) ![Typescript](https://img.shields.io/badge/Typescript-8A2BE2?logo=typescript) ![license](https://img.shields.io/github/license/Windsland52/MAALogAnalyzer) ![activity](https://img.shields.io/github/commit-activity/m/Windsland52/MAALogAnalyzer?color=%23ff69b4) ![stars](https://img.shields.io/github/stars/Windsland52/MAALogAnalyzer?style=social) [![website](https://img.shields.io/badge/https://maaloganalyzer.maafw.xyz-%234285F4)](https://maaloganalyzer.maafw.xyz/)  
+  MaaFramework user log analysis tool, supporting visual task execution flow and full-text search.
 
 ### Application
 
@@ -118,9 +118,6 @@ It offers low-code simplicity while maintaining high extensibility. The framewor
 
 - [MAA_MHXY_MG](https://github.com/gitlihang/Maa_MHXY_MG) ![Pipeline](https://img.shields.io/badge/Pipeline-%23876f69?logo=paddypower&logoColor=%23FFFFFF) ![license](https://img.shields.io/github/license/gitlihang/Maa_MHXY_MG) ![activity](https://img.shields.io/github/commit-activity/m/gitlihang/Maa_MHXY_MG?color=%23ff69b4) ![stars](https://img.shields.io/github/stars/gitlihang/Maa_MHXY_MG?style=social) [![mirrorc](./docs/static/mirrorc-en.svg)](https://mirrorchyan.com/en/projects?source=maafw-badge)  
     Fantasy Westward Journey Mobile Assistant Based on New Architecture. Image technology + analogue control to free your hands! Powered by MaaFramework!
-
-- [MNMA](https://github.com/kqcoxn/MaaNewMoonAccompanying) ![Pipeline](https://img.shields.io/badge/Pipeline-%23876f69?logo=paddypower&logoColor=%23FFFFFF) ![python](https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white) ![license](https://img.shields.io/github/license/kqcoxn/MaaNewMoonAccompanying) ![activity](https://img.shields.io/github/commit-activity/m/kqcoxn/MaaNewMoonAccompanying?color=%23ff69b4) ![stars](https://img.shields.io/github/stars/kqcoxn/MaaNewMoonAccompanying?style=social) [![mirrorc](./docs/static/mirrorc-en.svg)](https://mirrorchyan.com/en/projects?source=maafw-badge)  
-    A New Moon Accompanying Assistant. Image technology + simulation control, freeing your hands! Powered by MaaFramework.
 
 - [MaaTOT](https://github.com/Coxwtwo/MaaTOT) ![Pipeline](https://img.shields.io/badge/Pipeline-%23876f69?logo=paddypower&logoColor=%23FFFFFF) ![license](https://img.shields.io/github/license/Coxwtwo/MaaTOT) ![activity](https://img.shields.io/github/commit-activity/m/Coxwtwo/MaaTOT?color=%23ff69b4) ![stars](https://img.shields.io/github/stars/Coxwtwo/MaaTOT?style=social)  
     A Tears of Themis Assistant. Image technology + simulation control, freeing your hands! Powered by MaaFramework.
@@ -163,6 +160,9 @@ It offers low-code simplicity while maintaining high extensibility. The framewor
 
 - [MAA Star Resonance](https://github.com/26F-Studio/maa-star-resonance) ![Typescript](https://img.shields.io/badge/Typescript-8A2BE2?logo=typescript) ![license](https://img.shields.io/github/license/26F-Studio/maa-star-resonance) ![activity](https://img.shields.io/github/commit-activity/m/26F-Studio/maa-star-resonance?color=%23ff69b4) ![stars](https://img.shields.io/github/stars/26F-Studio/maa-star-resonance?style=social)  
   A helper for Star Resonance. Using Electron + text image recognition + ADB simulation control technology, freeing your hands! Powered by MaaFramework and Quasar.
+
+- [StellaSora-Auto-Helper](https://github.com/SodaCodeSave/StellaSora-Auto-Helper) ![Pipeline](https://img.shields.io/badge/Pipeline-%23876f69?logo=paddypower&logoColor=%23FFFFFF) ![license](https://img.shields.io/github/license/SodaCodeSave/StellaSora-Auto-Helper) ![activity](https://img.shields.io/github/commit-activity/m/SodaCodeSave/StellaSora-Auto-Helper?color=%23ff69b4) ![stars](https://img.shields.io/github/stars/SodaCodeSave/StellaSora-Auto-Helper?style=social)  
+  Assistant for Stella Sora. Image recognition + simulation control to free your hands! Powered by MaaFramework!
 
 ## Eco-Building
 

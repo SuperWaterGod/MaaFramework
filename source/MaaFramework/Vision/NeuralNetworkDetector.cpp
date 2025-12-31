@@ -4,8 +4,9 @@
 #include <cctype>
 #include <map>
 #include <ranges>
-#include <regex>
 #include <sstream>
+
+#include <boost/regex.hpp>
 
 #include <onnxruntime/onnxruntime_cxx_api.h>
 
@@ -16,12 +17,12 @@ MAA_VISION_NS_BEGIN
 
 NeuralNetworkDetector::NeuralNetworkDetector(
     cv::Mat image,
-    cv::Rect roi,
+    std::vector<cv::Rect> rois,
     NeuralNetworkDetectorParam param,
     std::shared_ptr<Ort::Session> session,
     const Ort::MemoryInfo& memory_info,
     std::string name)
-    : VisionBase(std::move(image), std::move(roi), std::move(name))
+    : VisionBase(std::move(image), std::move(rois), std::move(name))
     , param_(std::move(param))
     , session_(std::move(session))
     , memory_info_(memory_info)
@@ -31,7 +32,7 @@ NeuralNetworkDetector::NeuralNetworkDetector(
 
 void NeuralNetworkDetector::analyze()
 {
-    LogFunc << name_ << VAR(uid_);
+    LogFunc << name_;
 
     if (!session_) {
         LogError << "OrtSession not loaded";
@@ -41,14 +42,16 @@ void NeuralNetworkDetector::analyze()
     auto start_time = std::chrono::steady_clock::now();
 
     auto labels = param_.labels.empty() ? parse_labels_from_metadata() : param_.labels;
-    auto results = detect(labels);
-    add_results(std::move(results), param_.expected, param_.thresholds);
+    while (next_roi()) {
+        auto results = detect(labels);
+        add_results(std::move(results), param_.expected, param_.thresholds);
+    }
 
     cherry_pick();
 
     auto cost = duration_since(start_time);
-    LogDebug << name_ << VAR(uid_) << VAR(all_results_) << VAR(filtered_results_) << VAR(best_result_) << VAR(cost) << VAR(param_.model)
-             << VAR(labels) << VAR(param_.expected) << VAR(param_.thresholds);
+    LogDebug << name_ << VAR(all_results_) << VAR(filtered_results_) << VAR(best_result_) << VAR(cost) << VAR(param_.model) << VAR(labels)
+             << VAR(param_.expected) << VAR(param_.thresholds);
 }
 
 NeuralNetworkDetector::ResultsVec NeuralNetworkDetector::detect(const std::vector<std::string>& labels) const
@@ -165,7 +168,7 @@ void NeuralNetworkDetector::add_results(ResultsVec results, const std::vector<in
     }
 
     if (expected.size() != thresholds.size()) {
-        LogError << name_ << VAR(uid_) << "expected.size() != thresholds.size()" << VAR(expected) << VAR(thresholds);
+        LogError << name_ << "expected.size() != thresholds.size()" << VAR(expected) << VAR(thresholds);
         return;
     }
 
@@ -269,11 +272,11 @@ std::vector<std::string> NeuralNetworkDetector::parse_labels_from_metadata() con
     }
 
     if (names_str.empty()) {
-        LogDebug << name_ << VAR(uid_) << "No metadata found with keys: names, name, labels, class_names";
+        LogDebug << name_ << "No metadata found with keys: names, name, labels, class_names";
         return {};
     }
 
-    LogDebug << name_ << VAR(uid_) << "Found metadata" << VAR(names_str);
+    LogDebug << name_ << "Found metadata" << VAR(names_str);
 
     // 解析字符串格式：{0: 'white_dog', 1: 'white_cat', 2: 'black_dog', 3: 'black_cat'}
     // 支持单引号和双引号
@@ -282,13 +285,13 @@ std::vector<std::string> NeuralNetworkDetector::parse_labels_from_metadata() con
     // 解析 Python 字典格式：{0: 'label1', 1: 'label2', ...}
     // 正则表达式匹配：数字: 引号内的字符串
     // 支持单引号和双引号，以及可能的空格
-    std::regex dict_pattern(R"((\d+)\s*:\s*['"]([^'"]+)['"])");
-    std::sregex_iterator iter(names_str.begin(), names_str.end(), dict_pattern);
-    std::sregex_iterator end;
+    boost::regex dict_pattern(R"((\d+)\s*:\s*['"]([^'"]+)['"])");
+    boost::sregex_iterator iter(names_str.begin(), names_str.end(), dict_pattern);
+    boost::sregex_iterator end;
 
     std::map<int, std::string> label_map;
     for (; iter != end; ++iter) {
-        const std::smatch& match = *iter;
+        const boost::smatch& match = *iter;
         if (match.size() < 3) {
             continue; // 跳过不完整的匹配
         }
@@ -305,14 +308,14 @@ std::vector<std::string> NeuralNetworkDetector::parse_labels_from_metadata() con
     }
 
     if (label_map.empty()) {
-        LogWarn << name_ << VAR(uid_) << "Failed to parse metadata as Python dict format" << VAR(names_str);
+        LogWarn << name_ << "Failed to parse metadata as Python dict format" << VAR(names_str);
         return {};
     }
 
     // 找到最大索引，创建对应大小的向量
     int max_index = label_map.rbegin()->first;
     if (max_index < 0 || max_index > 10000) {
-        LogWarn << name_ << VAR(uid_) << "Invalid max_index" << VAR(max_index);
+        LogWarn << name_ << "Invalid max_index" << VAR(max_index);
         return {};
     }
 
@@ -323,7 +326,7 @@ std::vector<std::string> NeuralNetworkDetector::parse_labels_from_metadata() con
         }
     }
 
-    LogDebug << name_ << VAR(uid_) << "Parsed labels from metadata" << VAR(labels.size());
+    LogDebug << name_ << "Parsed labels from metadata" << VAR(labels.size());
     return labels;
 }
 

@@ -2,9 +2,11 @@ import json
 from dataclasses import dataclass, field
 from typing import Any, List, Optional, Tuple, Union, Dict
 from strenum import StrEnum
+
 # Type aliases to match C++ std::variant types
 JRect = Tuple[int, int, int, int]  # std::array<int, 4>
 JTarget = Union[bool, str, JRect]  # std::variant<bool, std::string, JRect>
+
 
 # strenum
 class JRecognitionType(StrEnum):
@@ -15,7 +17,10 @@ class JRecognitionType(StrEnum):
     OCR = "OCR"
     NeuralNetworkClassify = "NeuralNetworkClassify"
     NeuralNetworkDetect = "NeuralNetworkDetect"
+    And = "And"
+    Or = "Or"
     Custom = "Custom"
+
 
 class JActionType(StrEnum):
     DoNothing = "DoNothing"
@@ -36,12 +41,15 @@ class JActionType(StrEnum):
     StopTask = "StopTask"
     Scroll = "Scroll"
     Command = "Command"
+    Shell = "Shell"
     Custom = "Custom"
+
 
 # Recognition parameter dataclasses (matching C++ JRecognitionParam variants)
 @dataclass
 class JDirectHit:
-    pass
+    roi: JTarget = (0, 0, 0, 0)
+    roi_offset: JRect = (0, 0, 0, 0)
 
 
 @dataclass
@@ -126,6 +134,17 @@ class JCustomRecognition:
     custom_recognition_param: Any = None
 
 
+@dataclass
+class JAnd:
+    all_of: List[Any] = field(default_factory=list)
+    box_index: int = 0
+
+
+@dataclass
+class JOr:
+    any_of: List[Any] = field(default_factory=list)
+
+
 # Recognition parameter union type
 JRecognitionParam = Union[
     JDirectHit,
@@ -135,6 +154,8 @@ JRecognitionParam = Union[
     JOCR,
     JNeuralNetworkClassify,
     JNeuralNetworkDetect,
+    JAnd,
+    JOr,
     JCustomRecognition,
 ]
 
@@ -241,6 +262,12 @@ class JCommand:
 
 
 @dataclass
+class JShell:
+    cmd: str  # 必选
+    timeout: int = 20000
+
+
+@dataclass
 class JCustomAction:
     custom_action: str  # 必选
     target: JTarget = True
@@ -266,6 +293,7 @@ JActionParam = Union[
     JStopTask,
     JScroll,
     JCommand,
+    JShell,
     JCustomAction,
 ]
 
@@ -316,6 +344,9 @@ class JPipelineData:
     post_delay: int = 200
     pre_wait_freezes: Optional[JWaitFreezes] = None
     post_wait_freezes: Optional[JWaitFreezes] = None
+    repeat: int = 1
+    repeat_delay: int = 0
+    repeat_wait_freezes: Optional[JWaitFreezes] = None
     max_hit: int = 4294967295  # UINT_MAX
     focus: Any = None
     attach: Dict = field(default_factory=dict)
@@ -337,15 +368,15 @@ class JPipelineParser:
 
     @classmethod
     def _parse_param(
-        cls, param_type: Union[JRecognitionType, JActionType], param_data: dict, param_type_map: dict, default_class
+        cls,
+        param_type: Union[JRecognitionType, JActionType],
+        param_data: dict,
+        param_type_map: dict,
     ) -> Union[JRecognitionParam, JActionParam]:
         """Generic function to parse parameters based on type map."""
         param_class = param_type_map.get(param_type)
         if not param_class:
             raise ValueError(f"Unknown type: {param_type}")
-
-        if param_class == default_class:
-            return param_class()
 
         try:
             return param_class(**param_data)
@@ -368,12 +399,16 @@ class JPipelineParser:
             JRecognitionType.OCR: JOCR,
             JRecognitionType.NeuralNetworkClassify: JNeuralNetworkClassify,
             JRecognitionType.NeuralNetworkDetect: JNeuralNetworkDetect,
+            JRecognitionType.And: JAnd,
+            JRecognitionType.Or: JOr,
             JRecognitionType.Custom: JCustomRecognition,
         }
-        return cls._parse_param(param_type, param_data, param_type_map, JDirectHit)
+        return cls._parse_param(param_type, param_data, param_type_map)
 
     @classmethod
-    def _parse_action_param(cls, param_type: JActionType, param_data: dict) -> JActionParam:
+    def _parse_action_param(
+        cls, param_type: JActionType, param_data: dict
+    ) -> JActionParam:
         """Convert dict to appropriate JActionParam variant based on type."""
         param_type_map = {
             JActionType.DoNothing: JDoNothing,
@@ -394,10 +429,11 @@ class JPipelineParser:
             JActionType.StopTask: JStopTask,
             JActionType.Scroll: JScroll,
             JActionType.Command: JCommand,
+            JActionType.Shell: JShell,
             JActionType.Custom: JCustomAction,
         }
 
-        return cls._parse_param(param_type, param_data, param_type_map, JDoNothing)
+        return cls._parse_param(param_type, param_data, param_type_map)
 
     @classmethod
     def parse_pipeline_data(cls, pipeline_data: Union[str, Dict]) -> JPipelineData:
@@ -414,7 +450,9 @@ class JPipelineParser:
 
         # Convert recognition
         recognition_data: dict = data.get("recognition")
-        recognition_type: JRecognitionType = JRecognitionType(recognition_data.get("type"))
+        recognition_type: JRecognitionType = JRecognitionType(
+            recognition_data.get("type")
+        )
         recognition_param_data: dict = recognition_data.get("param")
         recognition_param = cls._parse_recognition_param(
             recognition_type, recognition_param_data
@@ -430,6 +468,7 @@ class JPipelineParser:
 
         pre_wait_freezes = cls._parse_wait_freezes(data.get("pre_wait_freezes"))  # type: ignore
         post_wait_freezes = cls._parse_wait_freezes(data.get("post_wait_freezes"))  # type: ignore
+        repeat_wait_freezes = cls._parse_wait_freezes(data.get("repeat_wait_freezes"))  # type: ignore
 
         # Create JPipelineData with converted data
         return JPipelineData(
@@ -446,6 +485,9 @@ class JPipelineParser:
             post_delay=data.get("post_delay"),
             pre_wait_freezes=pre_wait_freezes,  # type: ignore
             post_wait_freezes=post_wait_freezes,  # type: ignore
+            repeat=data.get("repeat"),
+            repeat_delay=data.get("repeat_delay"),
+            repeat_wait_freezes=repeat_wait_freezes,  # type: ignore
             max_hit=data.get("max_hit"),
             focus=data.get("focus"),
             attach=data.get("attach"),

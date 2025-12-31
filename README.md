@@ -84,8 +84,8 @@ _✨ 基于图像识别的自动化黑盒测试框架 ✨_
 - [MaaMCP](https://github.com/MaaXYZ/MaaMCP) ![python](https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white) ![license](https://img.shields.io/github/license/MaaXYZ/MaaMCP) ![activity](https://img.shields.io/github/commit-activity/m/MaaXYZ/MaaMCP?color=%23ff69b4) ![stars](https://img.shields.io/github/stars/MaaXYZ/MaaMCP?style=social) [![pypi](https://img.shields.io/badge/PyPI-3776AB?logo=pypi&logoColor=white)](https://pypi.org/project/maa-mcp)  
   基于 MaaFramework 的 MCP 服务器 为 AI 助手提供 Android 设备和 Windows 桌面自动化能力
 
-- [MAALogAnalyzer](https://github.com/Windsland52/MAALogAnalyzer) ![Typescript](https://img.shields.io/badge/Typescript-8A2BE2?logo=typescript) ![license](https://img.shields.io/github/license/Windsland52/MAALogAnalyzer) ![activity](https://img.shields.io/github/commit-activity/m/Windsland52/MAALogAnalyzer?color=%23ff69b4) ![stars](https://img.shields.io/github/stars/Windsland52/MAALogAnalyzer?style=social) [![website](https://img.shields.io/badge/https://maaloganalyzer.maafw.xyz-%234285F4)](https://maaloganalyzer.maafw.xyz/)  
-  基于 Vue 3 + Tauri 的 MaaFramework 日志分析工具，支持可视化任务执行流程和全文搜索
+- [MaaLogAnalyzer](https://github.com/Windsland52/MAALogAnalyzer) ![Typescript](https://img.shields.io/badge/Typescript-8A2BE2?logo=typescript) ![license](https://img.shields.io/github/license/Windsland52/MAALogAnalyzer) ![activity](https://img.shields.io/github/commit-activity/m/Windsland52/MAALogAnalyzer?color=%23ff69b4) ![stars](https://img.shields.io/github/stars/Windsland52/MAALogAnalyzer?style=social) [![website](https://img.shields.io/badge/https://maaloganalyzer.maafw.xyz-%234285F4)](https://maaloganalyzer.maafw.xyz/)  
+  MaaFramework 用户日志分析工具，支持可视化任务执行流程和全文搜索
 
 ### 应用程序
 
@@ -115,9 +115,6 @@ _✨ 基于图像识别的自动化黑盒测试框架 ✨_
 
 - [MAA_MHXY_MG](https://github.com/gitlihang/Maa_MHXY_MG) ![Pipeline](https://img.shields.io/badge/Pipeline-%23876f69?logo=paddypower&logoColor=%23FFFFFF) ![license](https://img.shields.io/github/license/gitlihang/Maa_MHXY_MG) ![activity](https://img.shields.io/github/commit-activity/m/gitlihang/Maa_MHXY_MG?color=%23ff69b4) ![stars](https://img.shields.io/github/stars/gitlihang/Maa_MHXY_MG?style=social) [![mirrorc](./docs/static/mirrorc-zh.svg)](https://mirrorchyan.com/zh/projects?source=maafw-badge)
   梦幻西游手游 小助手。图像技术 + 模拟控制，解放双手！由 MaaFramework 强力驱动！
-
-- [MNMA](https://github.com/kqcoxn/MaaNewMoonAccompanying) ![Pipeline](https://img.shields.io/badge/Pipeline-%23876f69?logo=paddypower&logoColor=%23FFFFFF) ![python](https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white) ![license](https://img.shields.io/github/license/kqcoxn/MaaNewMoonAccompanying) ![activity](https://img.shields.io/github/commit-activity/m/kqcoxn/MaaNewMoonAccompanying?color=%23ff69b4) ![stars](https://img.shields.io/github/stars/kqcoxn/MaaNewMoonAccompanying?style=social) [![mirrorc](./docs/static/mirrorc-zh.svg)](https://mirrorchyan.com/zh/projects?source=maafw-badge)  
-  新月同行 小助手。图像技术 + 模拟控制，解放双手！由 MaaFramework 强力驱动！
 
 - [MaaTOT](https://github.com/Coxwtwo/MaaTOT) ![Pipeline](https://img.shields.io/badge/Pipeline-%23876f69?logo=paddypower&logoColor=%23FFFFFF) ![license](https://img.shields.io/github/license/Coxwtwo/MaaTOT) ![activity](https://img.shields.io/github/commit-activity/m/Coxwtwo/MaaTOT?color=%23ff69b4) ![stars](https://img.shields.io/github/stars/Coxwtwo/MaaTOT?style=social)  
   未定事件簿 小助手。图像技术 + 模拟控制，解放双手！由 MaaFramework 强力驱动！
@@ -160,6 +157,9 @@ _✨ 基于图像识别的自动化黑盒测试框架 ✨_
 
 - [MAA Star Resonance](https://github.com/26F-Studio/maa-star-resonance) ![Typescript](https://img.shields.io/badge/Typescript-8A2BE2?logo=typescript) ![license](https://img.shields.io/github/license/26F-Studio/maa-star-resonance) ![activity](https://img.shields.io/github/commit-activity/m/26F-Studio/maa-star-resonance?color=%23ff69b4) ![stars](https://img.shields.io/github/stars/26F-Studio/maa-star-resonance?style=social)  
   星痕共鸣小助手。使用 Electron + 文本图像识别 + ADB模拟控制 技术，解放双手！由 MaaFramework 和 Quasar 强力驱动！
+
+- [StellaSora-Auto-Helper](https://github.com/SodaCodeSave/StellaSora-Auto-Helper) ![Pipeline](https://img.shields.io/badge/Pipeline-%23876f69?logo=paddypower&logoColor=%23FFFFFF) ![license](https://img.shields.io/github/license/SodaCodeSave/StellaSora-Auto-Helper) ![activity](https://img.shields.io/github/commit-activity/m/SodaCodeSave/StellaSora-Auto-Helper?color=%23ff69b4) ![stars](https://img.shields.io/github/stars/SodaCodeSave/StellaSora-Auto-Helper?style=social)  
+  星塔旅人 小助手。图像技术 + 模拟控制，解放双手！由 MaaFramework 强力驱动！
 
 ## 生态共建
 

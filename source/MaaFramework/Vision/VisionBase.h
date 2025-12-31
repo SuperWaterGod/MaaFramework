@@ -42,18 +42,17 @@ public:
     using ImageEncodedBuffer = std::vector<uint8_t>;
 
 public:
-    VisionBase(cv::Mat image, cv::Rect roi, std::string name);
+    VisionBase(cv::Mat image, std::vector<cv::Rect> rois, std::string name);
 
     const std::vector<ImageEncodedBuffer>& draws() const& { return draws_; }
 
     std::vector<ImageEncodedBuffer> draws() && { return std::move(draws_); }
 
-    MaaRecoId uid() const { return uid_; }
-
-    static MaaRecoId generate_uid() { return ++s_global_uid; }
-
 protected:
     cv::Mat image_with_roi() const;
+
+    bool next_roi();
+    void reset_roi();
 
 protected:
     cv::Mat draw_roi(const cv::Mat& base = cv::Mat()) const;
@@ -61,19 +60,19 @@ protected:
 
 protected:
     const cv::Mat image_;
-    const cv::Rect roi_;
     const std::string name_;
 
+    cv::Rect roi_ {};
+
     bool debug_draw_ = false;
-    const MaaRecoId uid_ = ++s_global_uid;
 
 private:
     void init_draw();
 
-    mutable std::vector<ImageEncodedBuffer> draws_;
+    std::vector<cv::Rect> rois_;
+    size_t roi_index_ = 0;
 
-private:
-    inline static std::atomic<MaaRecoId> s_global_uid = 300'000'000;
+    mutable std::vector<ImageEncodedBuffer> draws_;
 };
 
 MAA_VISION_NS_END
